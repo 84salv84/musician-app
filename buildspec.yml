@@ -2,7 +2,7 @@ version: 0.2
 phases:
  pre_build:
    commands:
-     - REPOSITORY_URI=671710932095.dkr.ecr.eu-south-1.amazonaws.com
+     - REPOSITORY_URI=671710932095.dkr.ecr.eu-south-1.amazonaws.com/ss-eks-repo
      - echo $CODEBUILD_RESOLVED_SOURCE_VERSION      
      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION)
      - IMAGE_TAG=${COMMIT_HASH}:latest
@@ -12,8 +12,8 @@ phases:
      java: corretto11
  build:
    commands:
-     - printf '{"ImageURI":"%s"}' $671710932095.dkr.ecr.eu-south-1.amazonaws.com:latest > imageDetail.json
-     - docker build -t 671710932095.dkr.ecr.eu-south-1.amazonaws.com:latest .
-     - docker push 671710932095.dkr.ecr.eu-south-1.amazonaws.com:latest
+     - printf '{"ImageURI":"%s"}' $671710932095.dkr.ecr.eu-south-1.amazonaws.com/ss-eks-repo:latest > imageDetail.json
+     - docker build -t 671710932095.dkr.ecr.eu-south-1.amazonaws.com/ss-eks-repo:latest .
+     - docker push 671710932095.dkr.ecr.eu-south-1.amazonaws.com/ss-eks-repo:latest
 artifacts:
 files: imageDetail.json
