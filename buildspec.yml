@@ -1,31 +1,19 @@
 version: 0.2
-
-
 phases:
-  install:
-    runtime-versions:
-      docker: 18
-  pre_build:
-    commands:
-      - echo Logging in to Amazon ECR...
-      - echo aws --version
-      - echo $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-      - REPOSITORY_URI=671710932095.dkr.ecr.eu-south-1.amazonaws.com/ss-eks-repo:latest
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=${COMMIT_HASH:=latest}
-  build:
-    commands:
-      - echo Build started on 'date'
-      - echo Building the Docker image...          
-      - docker build -t $REPOSITORY_URI:latest .
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
-  post_build:
-    commands:
-      - echo Build completed on 'date'
-      - echo Pushing the Docker images...
-      - docker push $REPOSITORY_URI:latest
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing image definitions file...
-      - printf '[{"name":"test-task","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+ pre_build:
+   commands:
+     - REPOSITORY_URI=671710932095.dkr.ecr.eu-south-1.amazonaws.com
+     - echo $CODEBUILD_RESOLVED_SOURCE_VERSION      
+     - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION)
+     - IMAGE_TAG=${COMMIT_HASH}:latest
+     - $(aws ecr get-login --no-include-email --region eu-south-1)
+ install:
+   runtime-versions:
+     java: corretto11
+ build:
+   commands:
+     - printf '{"ImageURI":"%s"}' $671710932095.dkr.ecr.eu-south-1.amazonaws.com:latest > imageDetail.json
+     - docker build -t 671710932095.dkr.ecr.eu-south-1.amazonaws.com:latest .
+     - docker push 671710932095.dkr.ecr.eu-south-1.amazonaws.com:latest
 artifacts:
-    files: imagedefinitions.json
+files: imageDetail.json
